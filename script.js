@@ -10,27 +10,14 @@ const words = [
     "Gritar", "Estornudar", "Bostezar", "Cepillarse", "Afeitarse"
 ];
 
-let usedIndices = [];
-let correctCount = 0;
-let incorrectCount = 0;
 let timerInterval;
 let timer = 60;
 let gameStarted = false;
-let awaitingHorizontal = false;
-let canChangeWord = true; // Flag para controlar si se puede cambiar la palabra
 
 document.getElementById('startButton').addEventListener('click', startGame);
 
 function startGame() {
-    usedIndices = [];
-    correctCount = 0;
-    incorrectCount = 0;
-    timer = 60;
-    document.getElementById('score').innerText = `Correctas: ${correctCount} | Incorrectas: ${incorrectCount}`;
-    document.getElementById('timer').innerText = `Tiempo: ${timer}`;
     document.getElementById('startButton').style.display = 'none';
-    document.getElementById('wordDisplay').style.display = 'block';
-    document.body.style.backgroundColor = '#87CEEB'; // Azul cielo
     startTimer();
     showRandomWord();
     gameStarted = true;
@@ -48,21 +35,8 @@ function startTimer() {
 }
 
 function showRandomWord() {
-    if (usedIndices.length >= words.length) {
-        document.getElementById('wordDisplay').innerText = "¡Juego terminado!";
-        clearInterval(timerInterval);
-        return;
-    }
-
-    let randomIndex;
-    do {
-        randomIndex = Math.floor(Math.random() * words.length);
-    } while (usedIndices.includes(randomIndex));
-
-    usedIndices.push(randomIndex);
+    let randomIndex = Math.floor(Math.random() * words.length);
     document.getElementById('wordDisplay').innerText = words[randomIndex];
-    awaitingHorizontal = true;
-    canChangeWord = false; // Evita que la palabra cambie automáticamente
 }
 
 function endGame() {
@@ -70,34 +44,3 @@ function endGame() {
     document.getElementById('wordDisplay').innerText = "¡Juego terminado!";
     document.getElementById('startButton').style.display = 'inline-block';
 }
-
-function handleOrientation(event) {
-    if (!gameStarted && Math.abs(event.gamma) > 70 && Math.abs(event.beta) < 20) {
-        document.getElementById('startButton').style.display = 'inline-block';
-    }
-
-    if (gameStarted && awaitingHorizontal && Math.abs(event.gamma) < 20 && Math.abs(event.beta) < 20) {
-        document.body.style.backgroundColor = '#87CEEB'; // Azul cielo
-        awaitingHorizontal = false;
-        showRandomWord();
-    }
-
-    if (gameStarted && !awaitingHorizontal) {
-        if (event.beta > 45) {
-            // Incorrect - phone facing down
-            document.body.style.backgroundColor = 'red';
-            setTimeout(() => {
-                incorrectCount++;
-                document.getElementById('score').innerText = `Correctas: ${correctCount} | Incorrectas: ${incorrectCount}`;
-                awaitingHorizontal = true;
-                canChangeWord = true; // Permite que se cambie la palabra nuevamente
-            }, 1000);
-        } else if (event.beta < -45) {
-            // Correct - phone facing up
-            document.body.style.backgroundColor = 'green';
-            setTimeout(() => {
-                correctCount++;
-                document.getElementById('score').innerText = `Correctas: ${correctCount} | Incorrectas: ${incorrectCount}`;
-                awaitingHorizontal = true;
-                canChangeWord = true; // Permite que se cambie la palabra nuevamente
-            }, 1000);

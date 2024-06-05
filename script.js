@@ -17,6 +17,7 @@ let timerInterval;
 let timer = 60;
 let gameStarted = false;
 let awaitingHorizontal = false;
+let canChangeWord = true; // Flag para controlar si se puede cambiar la palabra
 
 document.getElementById('startButton').addEventListener('click', startGame);
 
@@ -61,6 +62,7 @@ function showRandomWord() {
     usedIndices.push(randomIndex);
     document.getElementById('wordDisplay').innerText = words[randomIndex];
     awaitingHorizontal = true;
+    canChangeWord = false; // Evita que la palabra cambie automáticamente
 }
 
 function endGame() {
@@ -82,23 +84,20 @@ function handleOrientation(event) {
 
     if (gameStarted && !awaitingHorizontal) {
         if (event.beta > 45) {
-            // Incorrecto - el teléfono está boca abajo
+            // Incorrect - phone facing down
             document.body.style.backgroundColor = 'red';
             setTimeout(() => {
                 incorrectCount++;
                 document.getElementById('score').innerText = `Correctas: ${correctCount} | Incorrectas: ${incorrectCount}`;
                 awaitingHorizontal = true;
+                canChangeWord = true; // Permite que se cambie la palabra nuevamente
             }, 1000);
         } else if (event.beta < -45) {
-            // Correcto - el teléfono está boca arriba
+            // Correct - phone facing up
             document.body.style.backgroundColor = 'green';
             setTimeout(() => {
                 correctCount++;
                 document.getElementById('score').innerText = `Correctas: ${correctCount} | Incorrectas: ${incorrectCount}`;
                 awaitingHorizontal = true;
+                canChangeWord = true; // Permite que se cambie la palabra nuevamente
             }, 1000);
-        }
-    }
-}
-
-window.addEventListener('deviceorientation', handleOrientation);

@@ -82,7 +82,7 @@ function handleOrientation(event) {
 
     if (gameStarted && !awaitingHorizontal) {
         if (event.beta > 45) {
-            // Incorrect - phone facing down
+            // Incorrecto - el teléfono está boca abajo
             document.body.style.backgroundColor = 'red';
             setTimeout(() => {
                 incorrectCount++;
@@ -90,7 +90,7 @@ function handleOrientation(event) {
                 awaitingHorizontal = true;
             }, 1000);
         } else if (event.beta < -45) {
-            // Correct - phone facing up
+            // Correcto - el teléfono está boca arriba
             document.body.style.backgroundColor = 'green';
             setTimeout(() => {
                 correctCount++;
